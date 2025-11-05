@@ -1,31 +1,19 @@
-# 1
-# python.exe -m pip install --upgrade pip
-# or
-# pip install --upgrade pip
-
-# 2
-# python.exe -m pip install -r requirements.txt
-# or
-# pip install -r requirements.txt
-
 import time
-import datetime
+
 import requests
 import random
-import os
-from dotenv import load_dotenv
 
-load_dotenv()
-bot_token = os.getenv("TOKEN")
+bot_key = '6798749998:AAHJmEGyF_8jH-WU1r1uNXoVOn-I18WQOeQ'
 
-url = f"https://api.telegram.org/bot{bot_token}/"
+url = f"https://api.telegram.org/bot{bot_key}/"  # don't forget to change the token!
 
 
 def last_update(request):
     response = requests.get(request + 'getUpdates')
-    print(response)
+    # TODO: Uncomment just for local testing
+    # print(response)
     response = response.json()
-    print(response)
+    # print(response)
     results = response['result']
     total_updates = len(results) - 1
     return results[total_updates]
@@ -48,45 +36,37 @@ def send_message(chat, text):
 
 
 def main():
-    update_id = last_update(url)['update_id']
-    while True:
-        # pythonanywhere
-        time.sleep(3)
-        update = last_update(url)
-        if update_id == update['update_id']:
-            message_text = get_message_text(update).lower()
-
-            if message_text == 'hi' or message_text == 'hello' or message_text == 'hey':
-                send_message(get_chat_id(update), 'Greetings! Type "Dice" to roll the dice!')
-
-            elif message_text == 'csc31':
-                send_message(get_chat_id(update), 'Python')
-
-            elif message_text == 'python':
-                send_message(get_chat_id(update), 'version 3.14')
-
-            elif message_text == 'dice':
-                _1 = random.randint(1, 6)
-                _2 = random.randint(1, 6)
-                send_message(get_chat_id(update),
-                             'You have ' + str(_1) + ' and ' + str(_2) + '!\nYour result is ' + str(_1 + _2) + '!')
-
-            # Новые команды
-            elif message_text == 'hallo':
-                send_message(get_chat_id(update), 'Hallo! everynyan haw ar u bai?')
-
-            elif message_text == 'showtime':
-                current_time = datetime.datetime.now().strftime("%H:%M:%S")
-                send_message(get_chat_id(update), f'time: {current_time}')
-
-            elif message_text == 'bye':
-                farewells = ['bye', 'dinaho', 'pakka']
-                send_message(get_chat_id(update), random.choice(farewells))
-
-            else:
-                send_message(get_chat_id(update), 'Sorry, I don\'t understand you :(')
-            update_id += 1
+    try:
+        update_id = last_update(url)['update_id']
+        while True:
+            # pythonanywhere
+            time.sleep(3)
+            update = last_update(url)
+            if update_id == update['update_id']:
+                if get_message_text(update).lower() == 'hi' or get_message_text(
+                        update).lower() == 'hello' or get_message_text(update).lower() == 'hey':
+                    send_message(get_chat_id(update), 'Greetings! Type "Dice" to roll the dice!')
+                elif get_message_text(update).lower() == 'csc31':
+                    send_message(get_chat_id(update), 'Python')
+                elif get_message_text(update).lower() == 'gin':
+                    send_message(get_chat_id(update), 'Finish')
+                    break
+                elif get_message_text(update).lower() == 'python':
+                    send_message(get_chat_id(update), 'version 3.10')
+                elif get_message_text(update).lower() == 'dice':
+                    _1 = random.randint(1, 6)
+                    _2 = random.randint(1, 6)
+                    send_message(get_chat_id(update),
+                                 'You have ' + str(_1) + ' and ' + str(_2) + '!\nYour result is ' + str(_1 + _2) + '!')
+                else:
+                    send_message(get_chat_id(update), 'Sorry, I don\'t understand you :(')
+                update_id += 1
+    except KeyboardInterrupt:
+        print('\nБот зупинено')
 
 
+# print(__name__)
 if __name__ == '__main__':
     main()
+# print(__name__)
+# print('HELLO') #При подключении файла как бибилиотеки import bot, в другой .py файл проекта, этот код будет запускатся при включении того, другого файла
