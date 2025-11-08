@@ -1,5 +1,5 @@
 import time
-
+import datetime
 import requests
 import random
 
@@ -58,6 +58,18 @@ def main():
                     _2 = random.randint(1, 6)
                     send_message(get_chat_id(update),
                                  'You have ' + str(_1) + ' and ' + str(_2) + '!\nYour result is ' + str(_1 + _2) + '!')
+
+                elif get_message_text == 'hallo':
+                    send_message(get_chat_id(update), 'Hallo! everynyan haw ar u bai?')
+
+                elif get_message_text == 'showtime':
+                    current_time = datetime.datetime.now().strftime("%H:%M:%S")
+                    send_message(get_chat_id(update), f'time: {current_time}')
+
+                elif get_message_text == 'bye':
+                    farewells = ['bye', 'dinaho', 'pakka']
+                    send_message(get_chat_id(update), random.choice(farewells))
+
                 else:
                     send_message(get_chat_id(update), 'Sorry, I don\'t understand you :(')
                 update_id += 1
