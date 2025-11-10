@@ -11,7 +11,6 @@ url = f"https://api.telegram.org/bot{bot_key}/"  # don't forget to change the to
 
 def last_update(request):
     response = requests.get(request + 'getUpdates')
-
     # print(response)
     response = response.json()
     # print(response)
@@ -51,10 +50,10 @@ def main():
                     current_time = datetime.datetime.now().strftime("%H:%M:%S")
                     send_message(get_chat_id(update), f'time: {current_time}')
                 elif get_message_text(update).lower() == 'bai':
-                    send_message(get_chat_id(update), 'Finish')
+                    send_message(get_chat_id(update), 'baiii')
                     break
                 elif get_message_text(update).lower() == 'python':
-                    send_message(get_chat_id(update), 'version 3.10')
+                    send_message(get_chat_id(update), 'version 4.20')
                 elif get_message_text(update).lower() == 'dice':
                     _1 = random.randint(1, 6)
                     _2 = random.randint(1, 6)
@@ -69,7 +68,7 @@ def main():
 
                 update_id += 1
     except KeyboardInterrupt:
-        print('\nБот зупинено')
+        print('\ni cant breathe')
 
 
 # print(__name__)
