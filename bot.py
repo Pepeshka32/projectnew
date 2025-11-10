@@ -2,83 +2,72 @@ import time
 import datetime
 import requests
 import random
+from calculator import calculate_exspression
 
 bot_key = '6798749998:AAHJmEGyF_8jH-WU1r1uNXoVOn-I18WQOeQ'
+url = f"https://api.telegram.org/bot{bot_key}/"
 
-url = f"https://api.telegram.org/bot{bot_key}/"  # don't forget to change the token!
 
-
-def last_update(request):
-    response = requests.get(request + 'getUpdates')
-    # TODO: Uncomment just for local testing
-    # print(response)
-    response = response.json()
-    # print(response)
-    results = response['result']
-    total_updates = len(results) - 1
-    return results[total_updates]
-
+def get_updates(offset=None):
+    params = {"timeout": 100, "offset": offset}
+    r = requests.get(url + "getUpdates", params=params)
+    return r.json()
 
 def get_chat_id(update):
     chat_id = update['message']['chat']['id']
     return chat_id
 
+def send_message(chat_id, text):
+    params = {"chat_id": chat_id, "text": text}
+    return requests.post(url + "sendMessage", data=params)
 
-def get_message_text(update):
-    message_text = update['message']['text']
-    return message_text
-
-
-def send_message(chat, text):
-    params = {'chat_id': chat, 'text': text}
-    response = requests.post(url + 'sendMessage', data=params)
-    return response
 
 
 def main():
-    try:
-        update_id = last_update(url)['update_id']
-        while True:
-            # pythonanywhere
-            time.sleep(3)
-            update = last_update(url)
-            if update_id == update['update_id']:
-                if get_message_text(update).lower() == 'hi' or get_message_text(
-                        update).lower() == 'hello' or get_message_text(update).lower() == 'hey':
-                    send_message(get_chat_id(update), 'Greetings! Type "Dice" to roll the dice!')
-                elif get_message_text(update).lower() == 'csc31':
-                    send_message(get_chat_id(update), 'Python')
-                elif get_message_text(update).lower() == 'gin':
-                    send_message(get_chat_id(update), 'Finish')
-                    break
-                elif get_message_text(update).lower() == 'python':
-                    send_message(get_chat_id(update), 'version 3.10')
-                elif get_message_text(update).lower() == 'dice':
-                    _1 = random.randint(1, 6)
-                    _2 = random.randint(1, 6)
-                    send_message(get_chat_id(update),
-                                 'You have ' + str(_1) + ' and ' + str(_2) + '!\nYour result is ' + str(_1 + _2) + '!')
+    offset = None
 
-                elif get_message_text == 'hallo':
-                    send_message(get_chat_id(update), 'Hallo! everynyan haw ar u bai?')
+    while True:
+        updates = get_updates(offset)
 
-                elif get_message_text == 'showtime':
-                    current_time = datetime.datetime.now().strftime("%H:%M:%S")
-                    send_message(get_chat_id(update), f'time: {current_time}')
+        if "result" in updates:
+            for upd in updates["result"]:
+                # Сразу готовим offset, чтобы НИКОГДА снова не получить это сообщение
+                offset = upd["update_id"] + 1
 
-                elif get_message_text == 'bye':
-                    farewells = ['bye', 'dinaho', 'pakka']
-                    send_message(get_chat_id(update), random.choice(farewells))
+                if "message" not in upd:
+                    continue
+
+                chat_id = upd["message"]["chat"]["id"]
+                text = upd["message"].get("text", "").lower()
+
+                # === ТВОИ КОМАНДЫ ===
+                if text in ("hai", "hallo", "oi"):
+                    send_message(chat_id, "Hallo! everynyan haw ar u? bai")
+
+                elif text == "showtime":
+                    t = datetime.datetime.now().strftime("%H:%M:%S")
+                    send_message(chat_id, f"time: {t}")
+
+                elif text == "python":
+                    send_message(chat_id, "version 3.14")
+
+                elif text == "dice":
+                    d1, d2 = random.randint(1, 6), random.randint(1, 6)
+                    send_message(chat_id, f"You have {d1} and {d2}! Result = {d1 + d2}")
+
+                elif text == "bai":
+                    send_message(chat_id, random.choice(["bye", "dinaho", "pakka"]))
 
                 else:
-                    send_message(get_chat_id(update), 'Sorry, I don\'t understand you :(')
-                update_id += 1
-    except KeyboardInterrupt:
-        print('\nБот зупинено')
+                    result = calculate_exspression(send_message(get_updates))
+                    if result is not None:
+                        send_message(get_chat_id(get_updates), result)
+                    else:
+                        send_message(chat_id, "Sorry, I don't understand you :(")
+
+        time.sleep(0.5)
 
 
-# print(__name__)
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
-# print(__name__)
-# print('HELLO') #При подключении файла как бибилиотеки import bot, в другой .py файл проекта, этот код будет запускатся при включении того, другого файла
