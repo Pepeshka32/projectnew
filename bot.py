@@ -1,13 +1,19 @@
+import os
 import time
 import datetime
 import requests
 import random
+from dotenv import load_dotenv
 from calculator import calculate_exspression
 
-bot_key = '6798749998:AAHJmEGyF_8jH-WU1r1uNXoVOn-I18WQOeQ'
+# bot_key = '6798749998:AAHJmEGyF_8jH-WU1r1uNXoVOn-I18WQOeQ'
+#
+# url = f"https://api.telegram.org/bot{bot_key}/"  # don't forget to change the token!
+load_dotenv()
 
-url = f"https://api.telegram.org/bot{bot_key}/"  # don't forget to change the token!
-
+bot_key = os.getenv("TOKEN")
+URL = os.getenv("URL")
+url = f"{URL}{bot_key}"
 
 def last_update(request):
     response = requests.get(request + 'getUpdates')
