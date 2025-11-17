@@ -146,25 +146,12 @@ workflows:
   build_and_test:
     jobs:
       - run_unit_tests
+      - run_api_tests
       - approve_bot_test:
           type: approval
           requires:
             - run_unit_tests
+            - run_api_tests
       - create_env_and_run_bot:
           requires:
             - approve_bot_test
-      # - approve_bot_db_test:
-      #     type: approval
-      #     requires:
-      #       - run_unit_tests
-      # - create_env_and_run_bot_with_db:
-      #     requires:
-      #       - approve_bot_db_test
-      # - hold_for_approval:
-      #     type: approval
-      #     requires:
-      #       - create_env_and_run_bot
-      # #            - create_env_and_run_bot_with_db
-      # - deploy:
-      #     requires:
-      #       - hold_for_approval
