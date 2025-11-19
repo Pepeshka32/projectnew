@@ -1,8 +1,7 @@
-
-def calculate_exspression(expression):
+def calculate_expression(expression):
     try:
         expression = expression.strip().replace(' ', '')
-        allowed_chars = ('0123456789+-*/.()')
+        allowed_chars = set('0123456789+-*/.()')
         if not all(c in allowed_chars for c in expression):
             return None
         result = eval(expression)

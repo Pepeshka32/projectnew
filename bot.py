@@ -1,25 +1,23 @@
-import os
 import time
-import datetime
 import requests
 import random
+from calculator import calculate_expression
+import os
 from dotenv import load_dotenv
-from calculator import calculate_exspression
 
-# bot_key = '6798749998:AAHJmEGyF_8jH-WU1r1uNXoVOn-I18WQOeQ'
-#
-# url = f"https://api.telegram.org/bot{bot_key}/"  # don't forget to change the token!
 load_dotenv()
 
 bot_key = os.getenv("TOKEN")
 URL = os.getenv("URL")
-url = f"{URL}{bot_key}"
+url = f"{URL}{bot_key}/"
+
 
 def last_update(request):
     response = requests.get(request + 'getUpdates')
+    # TODO: Uncomment just for local testing
     # print(response)
     response = response.json()
-    # print(response)
+    print(response)
     results = response['result']
     total_updates = len(results) - 1
     return results[total_updates]
@@ -50,35 +48,31 @@ def main():
             update = last_update(url)
             if update_id == update['update_id']:
                 if get_message_text(update).lower() == 'hai' or get_message_text(
-                        update).lower() == 'hallo' or get_message_text(update).lower() == 'oi':
-                    send_message(get_chat_id(update), 'Hallo! everynyan haw ar u bai?')
-                elif get_message_text(update).lower() == 'showtime':
-                    current_time = datetime.datetime.now().strftime("%H:%M:%S")
-                    send_message(get_chat_id(update), f'time: {current_time}')
+                        update).lower() == 'hallo' or get_message_text(update).lower() == 'haiii':
+                    send_message(get_chat_id(update), 'Hallo,haaw ar u,bai')
+                elif get_message_text(update).lower() == 'wha':
+                    send_message(get_chat_id(update), '🙄')
                 elif get_message_text(update).lower() == 'bai':
-                    send_message(get_chat_id(update), 'baiii')
+                    send_message(get_chat_id(update), 'baii')
                     break
-                elif get_message_text(update).lower() == 'python':
-                    send_message(get_chat_id(update), 'version 4.20')
+                elif get_message_text(update).lower() == 'paton':
+                    send_message(get_chat_id(update), 'ver 3.10')
                 elif get_message_text(update).lower() == 'dice':
                     _1 = random.randint(1, 6)
                     _2 = random.randint(1, 6)
                     send_message(get_chat_id(update),
                                  'You have ' + str(_1) + ' and ' + str(_2) + '!\nYour result is ' + str(_1 + _2) + '!')
                 else:
-                    result = calculate_exspression(get_message_text(update))
+                    result = calculate_expression(get_message_text(update))
                     if result is not None:
                         send_message(get_chat_id(update), result)
                     else:
-                        send_message(get_chat_id(update), 'Sorry, I don\'t understand you :(')
+                        send_message(get_chat_id(update), 'nah no:(')
 
                 update_id += 1
     except KeyboardInterrupt:
-        print('\ni cant breathe')
+        print('\nstap')
 
 
-# print(__name__)
 if __name__ == '__main__':
     main()
-# print(__name__)
-# print('HELLO') #При подключении файла как бибилиотеки import bot, в другой .py файл проекта, этот код будет запускатся при включении того, другого файла
